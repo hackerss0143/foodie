@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Foodi – Tamil Nadu Food Delivery</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f0f0;display:flex;justify-content:center;min-height:100vh;}
+#app{width:100%;max-width:430px;min-height:100vh;background:#FFF8F0;position:relative;box-shadow:0 0 60px rgba(0,0,0,0.18);display:flex;flex-direction:column;}
+
+/* HEADER */
+#header{background:linear-gradient(135deg,#E8530A,#FF6B2B);padding:14px 18px 10px;position:sticky;top:0;z-index:100;}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;}
+.logo{font-size:26px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.8);letter-spacing:1.5px;text-transform:uppercase;}
+#cart-btn{background:#fff;border:none;border-radius:22px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:13px;color:#E8530A;display:flex;align-items:center;gap:5px;}
+#cart-badge{background:#E8530A;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:800;display:none;}
+.loc-bar{margin-top:10px;display:flex;gap:8px;}
+.loc-chip{padding:5px 14px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.4);background:transparent;color:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;}
+.loc-chip.active{border-color:#fff;background:#fff;color:#E8530A;}
+
+/* NAV */
+#nav{display:flex;background:#fff;border-top:1px solid #eee;position:sticky;bottom:0;z-index:100;}
+.nav-btn{flex:1;border:none;background:none;padding:10px 0 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:#7A6050;font-size:10px;font-weight:600;transition:.15s;}
+.nav-btn.active{color:#E8530A;}
+.nav-btn .ni{font-size:20px;}
+
+/* CONTENT */
+#content{flex:1;overflow-y:auto;padding-bottom:4px;}
+.page{display:none;} .page.active{display:block;}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,rgba(232,83,10,.13),rgba(245,166,35,.08));padding:18px 16px 16px;}
+.hero-title{font-size:24px;font-weight:900;color:#1A0F00;line-height:1.2;}
+.hero-sub{font-size:13px;color:#7A6050;margin-top:4px;}
+.hero-btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.hero-btn{background:#E8530A;border:none;color:#fff;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* SECTION */
+.sec{padding:14px 14px 0;}
+.sec-title{font-size:17px;font-weight:800;color:#1A0F00;margin-bottom:12px;}
+
+/* PILLS */
+.pills{display:flex;gap:8px;overflow-x:auto;padding:8px 14px 12px;scrollbar-width:none;}
+.pills::-webkit-scrollbar{display:none;}
+.pill{padding:8px 18px;border-radius:24px;border:none;background:#fff;color:#1A0F00;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.08);flex-shrink:0;transition:.15s;}
+.pill.active{background:#E8530A;color:#fff;}
+
+/* POPULAR SCROLL */
+.pop-scroll{display:flex;gap:12px;overflow-x:auto;padding:0 14px 16px;scrollbar-width:none;}
+.pop-scroll::-webkit-scrollbar{display:none;}
+.pop-card{background:#fff;border-radius:18px;width:155px;flex-shrink:0;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.1);cursor:pointer;}
+.pop-card img{width:155px;height:155px;object-fit:cover;display:block;}
+.pop-img-ph{width:155px;height:155px;background:#FFE8CC;display:flex;align-items:center;justify-content:center;font-size:52px;}
+.pop-info{padding:10px;}
+.pop-name{font-weight:800;font-size:13px;color:#1A0F00;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pop-row{display:flex;justify-content:space-between;align-items:center;}
+.pop-price{font-weight:900;color:#E8530A;font-size:14px;}
+.pop-add{background:#E8530A;color:#fff;font-size:13px;font-weight:800;border-radius:8px;padding:3px 10px;border:none;cursor:pointer;}
+
+/* CATEGORY ROWS */
+.cat-row{background:#fff;border-radius:16px;margin:0 14px 10px;display:flex;align-items:center;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.07);cursor:pointer;}
+.cat-row img,.cat-row .cat-ph{width:72px;height:72px;object-fit:cover;flex-shrink:0;}
+.cat-ph{background:#FFE8CC;display:flex;align-items:center;justify-content:center;font-size:30px;}
+.cat-info{flex:1;padding:0 14px;}
+.cat-name{font-weight:800;color:#1A0F00;font-size:16px;}
+.cat-count{color:#7A6050;font-size:12px;}
+.cat-arr{color:#E8530A;font-size:22px;padding-right:14px;}
+
+/* FOOD CARDS */
+.food-card{background:#fff;border-radius:18px;margin:0 14px 12px;box-shadow:0 4px 16px rgba(0,0,0,0.09);overflow:hidden;display:flex;}
+.food-card img,.food-img-ph{width:115px;height:115px;object-fit:cover;flex-shrink:0;display:block;}
+.food-img-ph{background:#FFE8CC;display:flex;align-items:center;justify-content:center;font-size:44px;min-width:115px;}
+.food-body{flex:1;padding:12px 14px 12px 12px;}
+.food-name{font-size:15px;font-weight:800;color:#1A0F00;}
+.food-ta{font-size:11px;color:#7A6050;margin-bottom:3px;}
+.food-desc{font-size:12px;color:#7A6050;margin-bottom:7px;line-height:1.4;}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.badge-gold{background:rgba(245,166,35,.15);color:#d4900a;}
+.badge-blue{background:rgba(41,128,185,.12);color:#2980B9;}
+.badge-green{background:rgba(39,174,96,.12);color:#27AE60;}
+.badge-red{background:rgba(231,76,60,.12);color:#E74C3C;}
+.food-foot{display:flex;justify-content:space-between;align-items:center;}
+.food-price{font-size:18px;font-weight:900;color:#E8530A;}
+.add-btn{background:#E8530A;border:none;color:#fff;border-radius:10px;padding:8px 18px;font-weight:700;cursor:pointer;font-size:13px;}
+
+/* SEARCH */
+.search-box{padding:12px 14px;}
+.search-inp{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;margin-bottom:10px;}
+.veg-toggle{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;color:#1A0F00;}
+
+/* CART */
+.empty-state{text-align:center;padding:60px 20px;}
+.empty-icon{font-size:60px;margin-bottom:12px;}
+.empty-title{font-size:18px;font-weight:700;color:#1A0F00;margin-bottom:8px;}
+.empty-sub{color:#7A6050;margin-bottom:20px;}
+.cart-item{background:#fff;border-radius:14px;margin:0 14px 10px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;gap:10px;}
+.cart-item img,.cart-item .ci-ph{width:58px;height:58px;border-radius:10px;object-fit:cover;flex-shrink:0;}
+.ci-ph{background:#FFE8CC;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.ci-info{flex:1;}
+.ci-name{font-weight:700;font-size:14px;color:#1A0F00;}
+.ci-price{color:#E8530A;font-weight:700;font-size:13px;}
+.qty-row{display:flex;align-items:center;gap:8px;}
+.qty-btn{background:rgba(232,83,10,.15);border:none;border-radius:8px;width:30px;height:30px;font-weight:700;cursor:pointer;font-size:16px;color:#E8530A;}
+.qty-val{font-weight:800;font-size:16px;min-width:22px;text-align:center;color:#1A0F00;}
+.rm-btn{background:none;border:none;color:#E74C3C;font-size:18px;cursor:pointer;}
+.bill-box{background:#fff;border-radius:16px;margin:0 14px 14px;padding:16px;box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+.bill-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:#7A6050;}
+.bill-div{border-top:1px dashed #ddd;margin:8px 0 6px;}
+.bill-total{display:flex;justify-content:space-between;font-weight:900;font-size:17px;color:#1A0F00;}
+.bill-total span:last-child{color:#E8530A;}
+.btn-area{padding:0 14px 14px;}
+.main-btn{width:100%;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;background:#E8530A;color:#fff;}
+.main-btn.green{background:#27AE60;}
+.main-btn.grey{background:#eee;color:#1A0F00;margin-top:8px;}
+
+/* ADDRESS / PAYMENT */
+.form-box{padding:16px;}
+.form-label{font-size:11px;font-weight:600;color:#7A6050;margin-bottom:3px;}
+.form-inp{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;margin-bottom:10px;}
+.form-inp:focus{border-color:#E8530A;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.loc-opt{border:2px solid #eee;border-radius:12px;padding:10px 14px;margin-bottom:8px;cursor:pointer;transition:.2s;}
+.loc-opt.active{border-color:#E8530A;background:rgba(232,83,10,.05);}
+.pay-card{border:2px solid #eee;border-radius:14px;padding:13px 16px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:.2s;}
+.pay-card.active{border-color:#E8530A;background:rgba(232,83,10,.05);}
+.pay-icon{font-size:26px;}
+.pay-label{font-weight:700;color:#1A0F00;font-size:14px;}
+.pay-sub{color:#7A6050;font-size:12px;}
+.pay-radio{width:20px;height:20px;border-radius:10px;border:2px solid #ccc;margin-left:auto;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.pay-radio.active{border-color:#E8530A;background:#E8530A;}
+.pay-radio-dot{width:8px;height:8px;border-radius:4px;background:#fff;}
+.card-fields{background:rgba(232,83,10,.05);border-radius:14px;padding:14px;margin-bottom:14px;}
+.total-row{background:#fff;border-radius:14px;padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.total-label{font-weight:600;color:#1A0F00;}
+.total-val{font-weight:900;font-size:20px;color:#E8530A;}
+
+/* ORDERS */
+.order-card{background:#fff;border-radius:16px;margin:0 14px 12px;padding:14px;box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+.order-hdr{display:flex;justify-content:space-between;margin-bottom:8px;}
+.order-id{font-weight:800;color:#1A0F00;}
+.order-time{font-size:11px;color:#7A6050;}
+.order-thumbs{display:flex;gap:6px;margin-bottom:8px;position:relative;}
+.order-thumb{width:46px;height:46px;border-radius:8px;object-fit:cover;display:block;}
+.order-thumb-ph{width:46px;height:46px;border-radius:8px;background:#FFE8CC;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.thumb-qty{position:absolute;top:-4px;right:-4px;background:#E8530A;color:#fff;border-radius:8px;font-size:9px;font-weight:800;padding:1px 5px;}
+.order-items-txt{color:#7A6050;font-size:12px;margin-bottom:8px;}
+.order-foot{display:flex;justify-content:space-between;align-items:center;}
+.order-total{font-weight:900;color:#E8530A;font-size:16px;}
+.order-tags{display:flex;gap:8px;align-items:center;}
+.tag-blue{background:rgba(41,128,185,.12);color:#2980B9;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;}
+.track-btn{background:#E8530A;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* TRACKING */
+.track-map{border-radius:14px;overflow:hidden;margin-bottom:16px;background:linear-gradient(135deg,#e8f5e9,#e3f2fd);}
+.track-steps{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+.track-step{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+.track-step:last-child{margin-bottom:0;}
+.step-circle{width:36px;height:36px;border-radius:18px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:background .4s;}
+.step-circle.done{background:#E8530A;color:#fff;}
+.step-label{font-weight:700;color:#7A6050;font-size:14px;transition:color .4s;}
+.step-label.done{color:#1A0F00;}
+.step-ta{color:#7A6050;font-size:11px;}
+.step-now{font-size:10px;color:#E8530A;font-weight:700;background:rgba(232,83,10,.12);padding:3px 8px;border-radius:8px;margin-left:auto;white-space:nowrap;}
+.rider-info{font-size:12px;color:#E8530A;margin-top:2px;}
+.order-summary{background:#fff;border-radius:16px;padding:14px;box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+.sum-thumbs{display:flex;gap:8px;margin-bottom:10px;}
+.sum-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;position:relative;display:block;}
+.sum-thumb-ph{width:52px;height:52px;border-radius:10px;background:#FFE8CC;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;color:#7A6050;margin-bottom:4px;}
+.sum-total{border-top:1px dashed #ddd;margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-weight:800;font-size:15px;color:#1A0F00;}
+.sum-total span:last-child{color:#E8530A;}
+
+/* ADMIN */
+.admin-hdr{padding:14px;display:flex;justify-content:space-between;align-items:center;}
+.add-item-btn{background:#E8530A;border:none;color:#fff;border-radius:10px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:13px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:0 14px 14px;}
+.stat-card{background:#fff;border-radius:14px;padding:12px 8px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.stat-icon{font-size:24px;}
+.stat-val{font-weight:900;font-size:16px;color:#1A0F00;}
+.stat-lbl{font-size:10px;color:#7A6050;}
+.admin-section-lbl{padding:0 14px 8px;font-weight:700;color:#7A6050;font-size:11px;letter-spacing:1px;}
+.admin-row{background:#fff;border-radius:12px;margin:0 14px 8px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.admin-row img,.admin-row .ar-ph{width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0;}
+.ar-ph{background:#FFE8CC;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.ar-info{flex:1;}
+.ar-name{font-weight:700;font-size:13px;color:#1A0F00;}
+.ar-meta{color:#7A6050;font-size:11px;}
+.ar-btns{display:flex;gap:6px;}
+.ar-btn{border:none;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:15px;flex-shrink:0;}
+.ar-btn-blue{background:rgba(41,128,185,.15);color:#2980B9;}
+.ar-btn-red{background:rgba(231,76,60,.15);color:#E74C3C;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;padding:24px 18px 36px;width:100%;max-width:430px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-weight:800;font-size:18px;margin-bottom:16px;color:#1A0F00;}
+.modal-img-preview{margin-top:6px;}
+
+/* TOAST */
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#27AE60;color:#fff;padding:11px 24px;border-radius:30px;font-weight:700;font-size:14px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap;display:none;transition:.3s;}
+#toast.err{background:#E74C3C;}
+
+/* RECENT ORDER CARD */
+.recent-card{background:#fff;border-radius:16px;margin:0 14px 14px;padding:14px;box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+
+/* UTIL */
+.hidden{display:none!important;}
+input[type=checkbox]{accent-color:#E8530A;}
+select{font-family:inherit;}
+
+/* IMAGE UPLOAD */
+.img-upload-section{margin-bottom:14px;}
+.img-upload-label{font-size:11px;font-weight:600;color:#7A6050;margin-bottom:6px;display:block;}
+.img-upload-area{border:2px dashed #E8530A;border-radius:14px;padding:0;cursor:pointer;transition:.2s;position:relative;overflow:hidden;background:#FFF8F0;}
+.img-upload-area:hover{background:#fff0e8;border-color:#FF6B2B;}
+.img-upload-area.has-img{border-style:solid;border-color:#E8530A;}
+.img-upload-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px 14px;}
+.img-upload-icon{font-size:32px;}
+.img-upload-text{font-size:13px;font-weight:700;color:#E8530A;}
+.img-upload-sub{font-size:11px;color:#7A6050;}
+.img-preview-wrap{position:relative;width:100%;height:160px;}
+.img-preview-wrap img{width:100%;height:160px;object-fit:cover;display:block;border-radius:12px;}
+.img-preview-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;gap:10px;border-radius:12px;opacity:0;transition:.2s;}
+.img-preview-wrap:hover .img-preview-overlay{opacity:1;}
+.img-overlay-btn{background:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;color:#E8530A;}
+.img-overlay-btn.del{color:#E74C3C;}
+.img-src-tabs{display:flex;gap:6px;margin-bottom:10px;}
+.img-src-tab{flex:1;border:1.5px solid #ddd;border-radius:10px;padding:8px 6px;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#7A6050;text-align:center;transition:.15s;}
+.img-src-tab.active{border-color:#E8530A;background:#E8530A;color:#fff;}
+.img-url-row{display:flex;gap:8px;margin-bottom:10px;}
+.img-url-inp{flex:1;border:1.5px solid #ddd;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;}
+.img-url-inp:focus{border-color:#E8530A;}
+.img-url-btn{background:#E8530A;border:none;color:#fff;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:13px;white-space:nowrap;}
+.img-upload-input{display:none;}
+.admin-row .item-img{width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0;display:block;}
+.change-img-btn{position:absolute;bottom:4px;right:4px;background:#E8530A;color:#fff;border:none;border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HEADER -->
+<div id="header">
+  <div class="hdr-top">
+    <div>
+      <div class="logo">🍛 Foodi</div>
+      <div class="logo-sub">TAMIL NADU · FAST &amp; TASTY</div>
+    </div>
+    <button id="cart-btn" onclick="goPage('cart')">
+      🛒 <span id="cart-badge">0</span> <span id="cart-label">Cart</span>
+    </button>
+  </div>
+  <div class="loc-bar" id="loc-bar"></div>
+</div>
+
+<!-- CONTENT -->
+<div id="content">
+
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="hero">
+      <div class="hero-title">சாப்பிட வேண்டுமா? 🍽️<br>Order Tamil Nadu's Best!</div>
+      <div class="hero-sub" id="hero-sub">Delivering to Kalpakkam in 30–45 min</div>
+      <div class="hero-btns">
+        <button class="hero-btn" onclick="filterGo('biryani')">🍛 Biryani</button>
+        <button class="hero-btn" onclick="filterGo('panipuri')">🫧 Pani Puri</button>
+        <button class="hero-btn" onclick="filterGo('snacks')">🥜 Snacks</button>
+      </div>
+    </div>
+    <div class="sec"><div class="sec-title">🔥 Popular Right Now</div></div>
+    <div class="pop-scroll" id="pop-scroll"></div>
+    <div class="sec">
+      <div class="sec-title">📂 Browse Category</div>
+      <div id="cat-rows"></div>
+    </div>
+    <div class="sec" id="recent-sec" style="display:none">
+      <div class="sec-title">📦 Recent Order</div>
+      <div class="recent-card" id="recent-card"></div>
+    </div>
+    <div style="height:14px"></div>
+  </div>
+
+  <!-- MENU -->
+  <div class="page" id="page-menu">
+    <div class="search-box">
+      <input class="search-inp" id="search-inp" placeholder="🔍 Search food..." oninput="renderMenu()"/>
+      <label class="veg-toggle"><input type="checkbox" id="veg-chk" onchange="renderMenu()"> 🌿 Veg only</label>
+    </div>
+    <div class="pills" id="cat-pills"></div>
+    <div id="menu-list"></div>
+  </div>
+
+  <!-- CART -->
+  <div class="page" id="page-cart">
+    <div id="cart-view"></div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="page" id="page-orders">
+    <div class="sec"><div class="sec-title">📦 My Orders</div></div>
+    <div id="orders-list"></div>
+  </div>
+
+  <!-- TRACK -->
+  <div class="page" id="page-track">
+    <div class="hero">
+      <div class="hero-title">🛵 Live Tracking</div>
+      <div class="hero-sub" id="track-sub">—</div>
+    </div>
+    <div style="padding:16px">
+      <div class="track-map">
+        <svg id="track-svg" width="100%" viewBox="0 0 340 168">
+          <rect x="44" y="73" width="252" height="14" rx="7" fill="#90A4AE"/>
+          <rect x="44" y="79" width="252" height="2" fill="#fff" opacity="0.4"/>
+          <rect id="track-prog" x="44" y="73" width="0" height="14" rx="7" fill="#E8530A" opacity="0.8"/>
+          <g><circle cx="52" cy="80" r="9" fill="#fff" stroke="#E8530A" stroke-width="2"/><text x="52" y="63" text-anchor="middle" font-size="9" fill="#2D1F0E" font-weight="700">Kalpakkam</text><text x="52" y="108" text-anchor="middle" font-size="14">⚛️</text></g>
+          <g><circle cx="170" cy="80" r="9" fill="#fff" stroke="#E8530A" stroke-width="2"/><text x="170" y="63" text-anchor="middle" font-size="9" fill="#2D1F0E" font-weight="700">ECR</text><text x="170" y="108" text-anchor="middle" font-size="14">🛣️</text></g>
+          <g><circle cx="288" cy="80" r="9" fill="#fff" stroke="#E8530A" stroke-width="2"/><text x="288" y="63" text-anchor="middle" font-size="9" fill="#2D1F0E" font-weight="700">Koovathur</text><text x="288" y="108" text-anchor="middle" font-size="14">🌊</text></g>
+          <g id="rider-g" transform="translate(44,50)">
+            <circle cx="0" cy="0" r="18" fill="#E8530A" opacity="0.15"/>
+            <text x="0" y="8" text-anchor="middle" font-size="22">🛵</text>
+          </g>
+          <text id="track-pct-txt" x="170" y="162" text-anchor="middle" font-size="10" fill="#7A6050">0% complete · ~18 min remaining</text>
+        </svg>
+      </div>
+      <div class="track-steps" id="track-steps"></div>
+      <div class="order-summary" id="track-summary"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="page" id="page-admin">
+    <div class="admin-hdr">
+      <div class="sec-title" style="margin-bottom:0">⚙️ Admin Panel</div>
+      <button class="add-item-btn" onclick="openAdminForm('add',null)">+ Add Item</button>
+    </div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="admin-section-lbl">MENU ITEMS</div>
+    <div id="admin-list"></div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- BOTTOM NAV -->
+<nav id="nav">
+  <button class="nav-btn active" data-page="home" onclick="goPage('home')"><span class="ni">🏠</span>Home</button>
+  <button class="nav-btn" data-page="menu" onclick="goPage('menu')"><span class="ni">🍽️</span>Menu</button>
+  <button class="nav-btn" data-page="orders" onclick="goPage('orders')"><span class="ni">📦</span>Orders</button>
+  <button class="nav-btn" data-page="track" onclick="goPage('track')"><span class="ni">🛵</span>Track</button>
+  <button class="nav-btn" data-page="admin" onclick="goPage('admin')"><span class="ni">⚙️</span>Admin</button>
+</nav>
+
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="admin-modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title">Add Menu Item</div>
+    <input type="hidden" id="edit-id"/>
+    <div class="form-label">Name (English)</div>
+    <input class="form-inp" id="f-name" placeholder="Item name"/>
+    <div class="form-label">Name (Tamil)</div>
+    <input class="form-inp" id="f-ta" placeholder="தமிழ் பெயர்"/>
+    <div class="form-label">Description</div>
+    <input class="form-inp" id="f-desc" placeholder="Short description"/>
+    <div class="grid2">
+      <div>
+        <div class="form-label">Price (₹)</div>
+        <input class="form-inp" id="f-price" type="number" placeholder="0"/>
+      </div>
+      <div>
+        <div class="form-label">Prep Time (min)</div>
+        <input class="form-inp" id="f-prep" type="number" placeholder="15"/>
+      </div>
+    </div>
+    <div class="form-label">Category</div>
+    <select class="form-inp" id="f-cat">
+      <option value="biryani">Biryani</option>
+      <option value="panipuri">Pani Puri</option>
+      <option value="snacks">Snacks</option>
+    </select>
+    <div class="img-upload-section">
+      <span class="img-upload-label">Food Photo</span>
+      <div class="img-src-tabs">
+        <div class="img-src-tab active" id="tab-upload" onclick="switchImgTab('upload')">📁 Upload Photo</div>
+        <div class="img-src-tab" id="tab-url" onclick="switchImgTab('url')">🔗 Paste URL</div>
+        <div class="img-src-tab" id="tab-preset" onclick="switchImgTab('preset')">🖼️ Preset</div>
+      </div>
+      <div id="img-tab-upload">
+        <div class="img-upload-area" id="img-drop-zone" onclick="document.getElementById('img-file-input').click()">
+          <div class="img-upload-inner" id="img-placeholder">
+            <div class="img-upload-icon">📷</div>
+            <div class="img-upload-text">Tap to upload your food photo</div>
+            <div class="img-upload-sub">JPG, PNG, WEBP · Max 5MB</div>
+          </div>
+          <div class="img-preview-wrap" id="img-preview-wrap" style="display:none">
+            <img id="img-preview-img" src="" alt="preview"/>
+            <div class="img-preview-overlay">
+              <button class="img-overlay-btn" onclick="event.stopPropagation();document.getElementById('img-file-input').click()">📷 Change</button>
+              <button class="img-overlay-btn del" onclick="event.stopPropagation();clearUploadedImg()">🗑️ Remove</button>
+            </div>
+          </div>
+        </div>
+        <input type="file" id="img-file-input" class="img-upload-input" accept="image/*" onchange="handleFileUpload(this)"/>
+      </div>
+      <div id="img-tab-url" style="display:none">
+        <div class="img-url-row">
+          <input class="img-url-inp" id="img-url-inp" placeholder="https://example.com/food.jpg" oninput="previewUrl()"/>
+          <button class="img-url-btn" onclick="applyUrl()">Load</button>
+        </div>
+        <div id="img-url-preview" style="display:none">
+          <img id="img-url-preview-img" src="" style="width:100%;height:140px;object-fit:cover;border-radius:12px;display:block" onerror="showUrlError()" onload="showUrlOk()"/>
+          <div id="img-url-status" style="font-size:11px;margin-top:4px;font-weight:600"></div>
+        </div>
+      </div>
+      <div id="img-tab-preset" style="display:none">
+        <select class="form-inp" id="f-imgkey" onchange="updateImgPreview()"></select>
+        <div id="modal-img-preview" style="margin-top:6px"></div>
+      </div>
+    </div>
+    <label class="veg-toggle" style="margin-bottom:16px;display:flex">
+      <input type="checkbox" id="f-veg"> 🌿 Vegetarian
+    </label>
+    <button class="main-btn" onclick="saveItem()">Save Item</button>
+    <button class="main-btn grey" onclick="document.getElementById('admin-modal').classList.remove('open')">Cancel</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const IMGS = {
+  chicken_biryani:["https://www.licious.in/blog/wp-content/uploads/2020/12/Chicken-Biryani.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Biryani_kawab.jpg/400px-Biryani_kawab.jpg"],
+  mutton_biryani:["https://www.archanaskitchen.com/images/archanaskitchen/1-Author/sibyl_sunitha/Mutton_Biryani_Recipe_by_Archanas_Kitchen.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Lamb_biryani.jpg/400px-Lamb_biryani.jpg"],
+  veg_biryani:["https://www.vegrecipesofindia.com/wp-content/uploads/2020/07/veg-biryani-recipe-1.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Biryani_vegetariano.jpg/400px-Biryani_vegetariano.jpg"],
+  egg_biryani:["https://www.spiceupthecurry.com/wp-content/uploads/2014/06/egg-biryani-4.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Biryani_kawab.jpg/400px-Biryani_kawab.jpg"],
+  prawn_biryani:["https://www.kannammacooks.com/wp-content/uploads/prawn-biryani-recipe-1.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Lamb_biryani.jpg/400px-Lamb_biryani.jpg"],
+  pani_puri:["https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Pani_puri_at_a_restaurant.jpg/400px-Pani_puri_at_a_restaurant.jpg","https://www.cookwithmanali.com/wp-content/uploads/2020/07/Pani-Puri.jpg"],
+  mint_puri:["https://www.vegrecipesofindia.com/wp-content/uploads/2021/04/pani-puri-1.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Pani_puri_at_a_restaurant.jpg/400px-Pani_puri_at_a_restaurant.jpg"],
+  sweet_puri:["https://www.indianhealthyrecipes.com/wp-content/uploads/2022/01/pani-puri-recipe.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Pani_puri_at_a_restaurant.jpg/400px-Pani_puri_at_a_restaurant.jpg"],
+  masala_puri:["https://www.indianhealthyrecipes.com/wp-content/uploads/2014/09/masala-puri-recipe.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Pani_puri_at_a_restaurant.jpg/400px-Pani_puri_at_a_restaurant.jpg"],
+  samosa:["https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Samosachutney.jpg/400px-Samosachutney.jpg","https://www.vegrecipesofindia.com/wp-content/uploads/2020/12/samosa-recipe-1.jpg"],
+  vada:["https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/South_Indian_vada.jpg/400px-South_Indian_vada.jpg","https://www.indianhealthyrecipes.com/wp-content/uploads/2022/02/medu-vada-recipe.jpg"],
+  pakoda:["https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Chicken_Pakoras.jpg/400px-Chicken_Pakoras.jpg","https://www.vegrecipesofindia.com/wp-content/uploads/2020/10/pakora-recipe-1.jpg"],
+  murukku:["https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Murukku_festival_snack.jpg/400px-Murukku_festival_snack.jpg","https://www.indianhealthyrecipes.com/wp-content/uploads/2021/10/murukku-recipe.jpg"],
+  mixture:["https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Mixture.jpg/400px-Mixture.jpg","https://www.indianhealthyrecipes.com/wp-content/uploads/2020/10/mixture-recipe.jpg"],
+  bajji:["https://www.indianhealthyrecipes.com/wp-content/uploads/2022/07/bajji-recipe.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Chicken_Pakoras.jpg/400px-Chicken_Pakoras.jpg"],
+};
+
+const EMOJIS = {biryani:"🍛",panipuri:"🫧",samosa:"🔺",vada:"🍩",pakoda:"🫘",murukku:"🌀",mixture:"🥣",bajji:"🍌"};
+
+let menu = [
+  {id:1,cat:"biryani", name:"Chicken Biryani",   ta:"சிக்கன் பிரியாணி",   price:180,desc:"Basmati rice with tender chicken, aromatic spices & seeraga samba",imgKey:"chicken_biryani",rating:4.8,prep:30,veg:false,pop:true},
+  {id:2,cat:"biryani", name:"Mutton Biryani",    ta:"மட்டன் பிரியாணி",    price:250,desc:"Slow-cooked mutton with Dindigul-style seeraga samba rice",       imgKey:"mutton_biryani", rating:4.9,prep:45,veg:false,pop:true},
+  {id:3,cat:"biryani", name:"Veg Biryani",       ta:"வெஜ் பிரியாணி",      price:130,desc:"Fresh mixed vegetables layered with fragrant basmati rice",       imgKey:"veg_biryani",    rating:4.5,prep:25,veg:true, pop:false},
+  {id:4,cat:"biryani", name:"Egg Biryani",       ta:"முட்டை பிரியாணி",    price:150,desc:"Boiled eggs cooked with biryani masala and caramelized onion",    imgKey:"egg_biryani",    rating:4.6,prep:25,veg:false,pop:false},
+  {id:5,cat:"biryani", name:"Prawn Biryani",     ta:"இறால் பிரியாணி",     price:280,desc:"Fresh tiger prawns with coastal South Indian spices",             imgKey:"prawn_biryani",  rating:4.7,prep:35,veg:false,pop:true},
+  {id:6,cat:"panipuri",name:"Classic Pani Puri", ta:"கிளாசிக் பானி பூரி", price:60, desc:"6 crispy puris with spicy tangy mint water and spiced masala",    imgKey:"pani_puri",      rating:4.7,prep:10,veg:true, pop:true},
+  {id:7,cat:"panipuri",name:"Mint Pani Puri",    ta:"புதினா பானி பூரி",   price:70, desc:"8 puris with extra refreshing mint-coriander chilled water",      imgKey:"mint_puri",      rating:4.6,prep:10,veg:true, pop:false},
+  {id:8,cat:"panipuri",name:"Sweet Pani Puri",   ta:"இனிப்பு பானி பூரி",  price:65, desc:"Tamarind-date sweet chutney with banana filling special",        imgKey:"sweet_puri",     rating:4.4,prep:10,veg:true, pop:false},
+  {id:9,cat:"panipuri",name:"Masala Puri",       ta:"மசால் பூரி",          price:80, desc:"Spicy white peas filling served with tomato and green chutneys", imgKey:"masala_puri",    rating:4.8,prep:15,veg:true, pop:true},
+  {id:10,cat:"snacks", name:"Samosa (2 pcs)",    ta:"சமோசா",               price:30, desc:"Crispy golden pastry stuffed with spiced potato and peas",       imgKey:"samosa",         rating:4.5,prep:10,veg:true, pop:true},
+  {id:11,cat:"snacks", name:"Vada (2 pcs)",      ta:"வடை",                 price:35, desc:"Crispy urad dal medu vada with coconut chutney and sambar",      imgKey:"vada",           rating:4.7,prep:12,veg:true, pop:true},
+  {id:12,cat:"snacks", name:"Pakoda",            ta:"பகோடா",               price:50, desc:"Mixed vegetable batter fritters served hot with mint chutney",   imgKey:"pakoda",         rating:4.4,prep:15,veg:true, pop:false},
+  {id:13,cat:"snacks", name:"Murukku",           ta:"முறுக்கு",            price:40, desc:"Traditional spiral rice and urad dal flour crunchy snack",       imgKey:"murukku",        rating:4.8,prep:5, veg:true, pop:true},
+  {id:14,cat:"snacks", name:"Mixture",           ta:"மிக்சர்",             price:45, desc:"Crispy savoury snack mix — Tamil Nadu favourite teatime bite",  imgKey:"mixture",        rating:4.6,prep:5, veg:true, pop:false},
+  {id:15,cat:"snacks", name:"Bajji (3 pcs)",     ta:"பஜ்ஜி",               price:40, desc:"Crispy raw banana and onion bajji with fresh coconut chutney",   imgKey:"bajji",          rating:4.5,prep:15,veg:true, pop:true},
+];
+
+const LOCS = [{id:"kalpakkam",name:"Kalpakkam",ta:"கல்பாக்கம்",icon:"⚛️"},{id:"koovathur",name:"Koovathur",ta:"குவாத்தூர்",icon:"🌊"}];
+const TRACK_STEPS = [
+  {label:"Order Placed",    ta:"ஆர்டர் வைக்கப்பட்டது",   icon:"📋"},
+  {label:"Confirmed",       ta:"உறுதிப்படுத்தப்பட்டது",  icon:"✅"},
+  {label:"Preparing",       ta:"தயாரிக்கிறோம்",           icon:"👨‍🍳"},
+  {label:"Out for Delivery",ta:"டெலிவரியில் உள்ளது",     icon:"🛵"},
+  {label:"Delivered!",      ta:"டெலிவர் செய்யப்பட்டது!", icon:"🎉"},
+];
+
+let cart=[], orders=[], currentLoc=LOCS[0], catFilter="all", trackOrder=null, trackTimer=null, trackPct=0, checkoutStep=0, payMethod="upi";
+
+// ── UTILS ─────────────────────────────────────────────────────────
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fmt=n=>"₹"+Number(n).toFixed(0);
+const cartQty=()=>cart.reduce((s,i)=>s+i.qty,0);
+const cartTotal=()=>cart.reduce((s,i)=>s+i.price*i.qty,0);
+
+function showToast(msg,type="ok"){
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.className=type==="err"?"err":"";
+  t.style.display="block";
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>t.style.display="none",2600);
+}
+
+// ── IMAGE HELPER ──────────────────────────────────────────────────
+function imgTag(imgKey,size,radius,cls=""){
+  const urls=IMGS[imgKey]||[];
+  if(!urls.length) return `<div class="${cls||'food-img-ph'}" style="width:${size}px;height:${size}px;border-radius:${radius}px">🍽️</div>`;
+  const fallbacks=urls.map((u,i)=>i>0?`this.src='${u}'`:"").filter(Boolean).join(";");
+  const errHandler=fallbacks?`onerror="${fallbacks};this.onerror=null;"`:`onerror="this.style.display='none'"`;
+  return `<img src="${urls[0]}" ${errHandler} style="width:${size}px;height:${size}px;border-radius:${radius}px;object-fit:cover;display:block;flex-shrink:0" loading="lazy">`;
+}
+
+// ── LOCATION BAR ─────────────────────────────────────────────────
+function renderLocBar(){
+  document.getElementById("loc-bar").innerHTML=LOCS.map(l=>`
+    <button class="loc-chip${l.id===currentLoc.id?' active':''}" onclick="setLoc('${l.id}')">
+      ${l.icon} ${l.name}
+    </button>`).join("");
+  document.getElementById("hero-sub").textContent=`Delivering to ${currentLoc.name} in 30–45 min`;
+}
+function setLoc(id){currentLoc=LOCS.find(l=>l.id===id);renderLocBar();}
+
+// ── CART HEADER ───────────────────────────────────────────────────
+function updateCartHeader(){
+  const q=cartQty(), badge=document.getElementById("cart-badge"), lbl=document.getElementById("cart-label");
+  if(q>0){badge.style.display="inline";badge.textContent=q;lbl.textContent=fmt(cartTotal());}
+  else{badge.style.display="none";lbl.textContent="Cart";}
+}
+
+// ── PAGE NAV ─────────────────────────────────────────────────────
+function goPage(p){
+  document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(el=>el.classList.remove("active"));
+  document.getElementById("page-"+p).classList.add("active");
+  document.querySelector(`[data-page="${p}"]`)?.classList.add("active");
+  if(p==="home") renderHome();
+  if(p==="menu") renderMenu();
+  if(p==="cart") renderCart();
+  if(p==="orders") renderOrders();
+  if(p==="admin") renderAdmin();
+}
+function filterGo(cat){catFilter=cat;goPage("menu");}
+
+// ── HOME ──────────────────────────────────────────────────────────
+function renderHome(){
+  // Popular
+  const pop=menu.filter(x=>x.pop);
+  document.getElementById("pop-scroll").innerHTML=pop.map(item=>`
+    <div class="pop-card" onclick="addToCart(${item.id})">
+      ${imgTagFull(item,155,0,"pop-img-ph")}
+      <div class="pop-info">
+        <div class="pop-name">${item.name}</div>
+        <div class="pop-row">
+          <span class="pop-price">${fmt(item.price)}</span>
+          <button class="pop-add">+</button>
+        </div>
+      </div>
+    </div>`).join("");
+
+  // Category rows
+  const cats=[["biryani","Biryani","chicken_biryani"],["panipuri","Pani Puri","pani_puri"],["snacks","Snacks","murukku"]];
+  document.getElementById("cat-rows").innerHTML=cats.map(([k,l,imgKey])=>`
+    <div class="cat-row" onclick="filterGo('${k}')">
+      ${imgTag(imgKey,72,0,"cat-ph")}
+      <div class="cat-info">
+        <div class="cat-name">${l}</div>
+        <div class="cat-count">${menu.filter(x=>x.cat===k).length} items available</div>
+      </div>
+      <span class="cat-arr">›</span>
+    </div>`).join("");
+
+  // Recent order
+  const sec=document.getElementById("recent-sec");
+  if(orders.length>0){
+    sec.style.display="block";
+    const o=orders[0];
+    document.getElementById("recent-card").innerHTML=`
+      <div style="font-weight:700;color:#1A0F00">#${o.id.slice(-6).toUpperCase()}</div>
+      <div style="color:#7A6050;font-size:12px;margin-bottom:8px">${o.date} · ${o.time} · ${fmt(o.total+30)}</div>
+      <button class="track-btn" onclick="startTrack('${o.id}')">🛵 Track Order</button>`;
+  } else sec.style.display="none";
+}
+
+// ── MENU ──────────────────────────────────────────────────────────
+function renderMenu(){
+  // Pills
+  const cats=[["all","🍽️ All"],["biryani","🍛 Biryani"],["panipuri","🫧 Pani Puri"],["snacks","🥜 Snacks"]];
+  document.getElementById("cat-pills").innerHTML=cats.map(([k,l])=>
+    `<button class="pill${catFilter===k?' active':''}" onclick="setCat('${k}')">${l}</button>`).join("");
+
+  const search=document.getElementById("search-inp").value.toLowerCase();
+  const vegOnly=document.getElementById("veg-chk").checked;
+  const filtered=menu.filter(item=>{
+    if(catFilter!=="all"&&item.cat!==catFilter) return false;
+    if(vegOnly&&!item.veg) return false;
+    if(search&&!item.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  if(!filtered.length){
+    document.getElementById("menu-list").innerHTML=`<div style="text-align:center;padding:40px;color:#7A6050">😔 No items found</div>`;
+    return;
+  }
+  document.getElementById("menu-list").innerHTML=filtered.map(item=>`
+    <div class="food-card">
+      ${imgTagFull(item,115,0,"food-img-ph")}
+      <div class="food-body">
+        <div class="food-name">${item.name}</div>
+        <div class="food-ta">${item.ta}</div>
+        <div class="food-desc">${item.desc}</div>
+        <div class="badges">
+          <span class="badge badge-gold">⭐ ${item.rating}</span>
+          <span class="badge badge-blue">🕐 ${item.prep}m</span>
+          <span class="badge ${item.veg?'badge-green':'badge-red'}">${item.veg?'🌿 Veg':'🍖 Non-veg'}</span>
+        </div>
+        <div class="food-foot">
+          <span class="food-price">${fmt(item.price)}</span>
+          <button class="add-btn" onclick="addToCart(${item.id})">+ Add</button>
+        </div>
+      </div>
+    </div>`).join("")+"<div style='height:14px'></div>";
+}
+function setCat(k){catFilter=k;renderMenu();}
+
+// ── CART ──────────────────────────────────────────────────────────
+function addToCart(id){
+  const item=menu.find(x=>x.id===id); if(!item) return;
+  const ex=cart.find(x=>x.id===id);
+  if(ex) ex.qty++; else cart.push({...item,qty:1});
+  updateCartHeader(); showToast(item.name+" added to cart!");
+  if(document.getElementById("page-cart").classList.contains("active")) renderCart();
+}
+function adjQty(id,d){
+  const i=cart.find(x=>x.id===id); if(!i) return;
+  i.qty=Math.max(0,i.qty+d);
+  if(i.qty===0) cart=cart.filter(x=>x.id!==id);
+  updateCartHeader(); renderCart();
+}
+function rmCart(id){cart=cart.filter(x=>x.id!==id);updateCartHeader();renderCart();}
+
+function renderCart(){
+  const el=document.getElementById("cart-view");
+  if(checkoutStep===1){el.innerHTML=renderAddress();return;}
+  if(checkoutStep===2){el.innerHTML=renderPaymentHTML();return;}
+  if(!cart.length){
+    el.innerHTML=`<div class="empty-state">
+      <div class="empty-icon">🛒</div>
+      <div class="empty-title">Cart is empty</div>
+      <div class="empty-sub">Add some delicious food!</div>
+      <button class="main-btn" style="width:auto;padding:12px 32px" onclick="goPage('menu')">Browse Menu</button>
+    </div>`; return;
+  }
+  const items=cart.map(item=>`
+    <div class="cart-item">
+      ${imgTagFull(item,58,10,"ci-ph")}
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-price">${fmt(item.price)} each</div>
+      </div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="adjQty(${item.id},-1)">−</button>
+        <span class="qty-val">${item.qty}</span>
+        <button class="qty-btn" onclick="adjQty(${item.id},1)">+</button>
+      </div>
+      <button class="rm-btn" onclick="rmCart(${item.id})">🗑️</button>
+    </div>`).join("");
+  const rows=cart.map(i=>`<div class="bill-row"><span>${i.name} × ${i.qty}</span><span>${fmt(i.price*i.qty)}</span></div>`).join("");
+  el.innerHTML=`
+    <div class="sec"><div class="sec-title">🛒 Cart (${cartQty()} items)</div></div>
+    ${items}
+    <div class="bill-box">
+      <div class="sec-title">🧾 Bill Summary</div>
+      ${rows}
+      <div class="bill-div"></div>
+      <div class="bill-row"><span>Delivery</span><span>₹30</span></div>
+      <div class="bill-div"></div>
+      <div class="bill-total"><span>Total</span><span>${fmt(cartTotal()+30)}</span></div>
+    </div>
+    <div class="btn-area">
+      <button class="main-btn" onclick="checkoutStep=1;renderCart()">Proceed to Checkout →</button>
+    </div>`;
+}
+
+function renderAddress(){
+  return `<div class="form-box">
+    <div class="sec-title" style="margin-bottom:18px">📍 Delivery Address</div>
+    <div class="form-label">Full Name *</div><input class="form-inp" id="a-name" placeholder="Full Name">
+    <div class="form-label">Phone Number *</div><input class="form-inp" id="a-phone" placeholder="Phone Number" type="tel">
+    <div class="form-label">House / Flat No.</div><input class="form-inp" id="a-house" placeholder="House / Flat No.">
+    <div class="form-label">Area / Street</div><input class="form-inp" id="a-area" placeholder="Area / Street">
+    <div class="form-label" style="margin-bottom:8px">Select Delivery Zone</div>
+    ${LOCS.map(l=>`<div class="loc-opt${currentLoc.id===l.id?' active':''}" onclick="setLoc('${l.id}');document.querySelectorAll('.loc-opt').forEach(x=>x.classList.remove('active'));this.classList.add('active')">
+      <strong>${l.icon} ${l.name}</strong> <span style="color:#7A6050;font-size:12px">· ${l.ta}</span>
+    </div>`).join("")}
+    <div style="height:12px"></div>
+    <button class="main-btn" onclick="goToPayment()">Continue →</button>
+    <button class="main-btn grey" onclick="checkoutStep=0;renderCart()">← Back to Cart</button>
+  </div>`;
+}
+function goToPayment(){
+  const n=document.getElementById("a-name")?.value, p=document.getElementById("a-phone")?.value;
+  if(!n||!p){showToast("Fill name & phone","err");return;}
+  window._addr={name:n,phone:p,house:document.getElementById("a-house")?.value||"",area:document.getElementById("a-area")?.value||""};
+  checkoutStep=2; renderCart();
+}
+
+function renderPaymentHTML(){
+  const pms=[
+    {id:"upi",  icon:"📱",label:"UPI / GPay / PhonePe",sub:"Instant payment"},
+    {id:"card", icon:"💳",label:"Credit / Debit Card", sub:"Visa, Mastercard, RuPay"},
+    {id:"cod",  icon:"💵",label:"Cash on Delivery",    sub:"Pay when food arrives"},
+    {id:"wallet",icon:"👛",label:"Foodi Wallet",       sub:"Balance: ₹200"},
+  ];
+  const cards=pms.map(pm=>`
+    <div class="pay-card${payMethod===pm.id?' active':''}" onclick="selectPay('${pm.id}')">
+      <span class="pay-icon">${pm.icon}</span>
+      <div><div class="pay-label">${pm.label}</div><div class="pay-sub">${pm.sub}</div></div>
+      <div class="pay-radio${payMethod===pm.id?' active':''}">
+        ${payMethod===pm.id?'<div class="pay-radio-dot"></div>':''}
+      </div>
+    </div>`).join("");
+  const cardFields=payMethod==="card"?`<div class="card-fields">
+    <input class="form-inp" placeholder="Card Number" maxlength="19">
+    <div class="grid2"><input class="form-inp" placeholder="MM/YY"><input class="form-inp" placeholder="CVV" maxlength="3"></div>
+  </div>`:"";
+  return `<div class="form-box">
+    <div class="sec-title" style="margin-bottom:18px">💳 Payment Method</div>
+    ${cards}${cardFields}
+    <div class="total-row"><span class="total-label">Total to pay</span><span class="total-val">${fmt(cartTotal()+30)}</span></div>
+    <button class="main-btn green" onclick="placeOrder()">🎉 Place Order</button>
+    <button class="main-btn grey" onclick="checkoutStep=1;renderCart()">← Back</button>
+  </div>`;
+}
+function selectPay(id){payMethod=id;renderCart();}
+
+function placeOrder(){
+  const o={id:uid(),items:[...cart],total:cartTotal(),loc:currentLoc,addr:window._addr||{},pay:payMethod,
+           time:new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}),
+           date:new Date().toLocaleDateString("en-IN")};
+  orders.unshift(o); cart=[]; checkoutStep=0;
+  updateCartHeader(); showToast("Order placed! 🎉");
+  renderHome(); startTrack(o.id);
+}
+
+// ── ORDERS ────────────────────────────────────────────────────────
+function renderOrders(){
+  if(!orders.length){
+    document.getElementById("orders-list").innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No orders yet</div><div class="empty-sub">Place your first order!</div></div>`;
+    return;
+  }
+  document.getElementById("orders-list").innerHTML=orders.map(o=>{
+    const thumbs=o.items.slice(0,4).map(it=>`
+      <div style="position:relative;display:inline-block">
+        ${imgTagFull(it,46,8,"order-thumb-ph")}
+        ${it.qty>1?`<span class="thumb-qty">${it.qty}</span>`:""}
+      </div>`).join("")+(o.items.length>4?`<div class="order-thumb-ph" style="width:46px;height:46px;font-size:14px;font-weight:700">+${o.items.length-4}</div>`:"");
+    return `<div class="order-card">
+      <div class="order-hdr"><span class="order-id">#${o.id.slice(-6).toUpperCase()}</span><span class="order-time">${o.date} · ${o.time}</span></div>
+      <div class="order-thumbs" style="display:flex;gap:6px;margin-bottom:8px">${thumbs}</div>
+      <div class="order-items-txt">${o.items.map(i=>i.name+"×"+i.qty).join(", ")}</div>
+      <div class="order-foot">
+        <span class="order-total">${fmt(o.total+30)}</span>
+        <div class="order-tags">
+          <span class="tag-blue">📍 ${o.loc.name}</span>
+          <button class="track-btn" onclick="startTrack('${o.id}')">🛵 Track</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("")+"<div style='height:14px'></div>";
+}
+
+// ── TRACKING ─────────────────────────────────────────────────────
+function startTrack(id){
+  trackOrder=orders.find(o=>o.id===id); if(!trackOrder) return;
+  trackPct=0; goPage("track");
+  document.getElementById("track-sub").textContent=`Order #${trackOrder.id.slice(-6).toUpperCase()} · ${trackOrder.loc.name}`;
+  clearInterval(trackTimer);
+  trackTimer=setInterval(()=>{
+    trackPct=Math.min(1,trackPct+0.007);
+    updateTrackUI();
+    if(trackPct>=1) clearInterval(trackTimer);
+  },280);
+  updateTrackUI();
+}
+
+function updateTrackUI(){
+  const sx=44,ex=296,pct=trackPct;
+  document.getElementById("track-prog").setAttribute("width",(ex-sx)*pct);
+  const bx=sx+(ex-sx)*pct;
+  document.getElementById("rider-g").setAttribute("transform",`translate(${bx},50)`);
+  document.getElementById("track-pct-txt").textContent=`${Math.round(pct*100)}% complete · ~${Math.round((1-pct)*18)} min remaining`;
+
+  let si=0;
+  if(pct>=0.2) si=1; if(pct>=0.42) si=2; if(pct>=0.66) si=3; if(pct>=0.96) si=4;
+
+  document.getElementById("track-steps").innerHTML=TRACK_STEPS.map((ts,i)=>`
+    <div class="track-step">
+      <div class="step-circle${i<=si?' done':''}">${i<=si?"✓":ts.icon}</div>
+      <div style="flex:1">
+        <div class="step-label${i<=si?' done':''}">${ts.label}</div>
+        <div class="step-ta">${ts.ta}</div>
+        ${i===si&&i===3?`<div class="rider-info">Rider: Murugan · 📞 98765 43210</div>`:""}
+      </div>
+      ${i===si?`<span class="step-now">NOW</span>`:""}
+    </div>`).join("");
+
+  if(trackOrder){
+    const thumbs=trackOrder.items.map(it=>`
+      <div style="position:relative">
+        ${imgTagFull(it,52,10,"sum-thumb-ph")}
+        <span style="position:absolute;top:-4px;right:-4px;background:#E8530A;color:#fff;border-radius:8px;font-size:9px;font-weight:800;padding:1px 5px">${it.qty}</span>
+      </div>`).join("");
+    const rows=trackOrder.items.map(i=>`<div class="sum-row"><span>${i.name} × ${i.qty}</span><span>${fmt(i.price*i.qty)}</span></div>`).join("");
+    document.getElementById("track-summary").innerHTML=`
+      <div style="font-weight:700;margin-bottom:10px;color:#1A0F00">Order Items</div>
+      <div class="sum-thumbs">${thumbs}</div>
+      ${rows}
+      <div class="sum-total"><span>Total Paid</span><span>${fmt(trackOrder.total+30)}</span></div>`;
+  }
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────
+function renderAdmin(){
+  const rev=orders.reduce((a,o)=>a+o.total,0);
+  document.getElementById("stats-grid").innerHTML=[
+    ["🍽️",menu.length,"Items"],["📦",orders.length,"Orders"],["💰",fmt(rev),"Revenue"]
+  ].map(([i,v,l])=>`<div class="stat-card"><div class="stat-icon">${i}</div><div class="stat-val">${v}</div><div class="stat-lbl">${l}</div></div>`).join("");
+
+  document.getElementById("admin-list").innerHTML=menu.map(item=>`
+    <div class="admin-row">
+      ${imgTagFull(item,48,8,"ar-ph")}
+      <div class="ar-info">
+        <div class="ar-name">${item.name}</div>
+        <div class="ar-meta">${item.cat} · ${fmt(item.price)} · ${item.veg?"🌿":"🍖"}</div>
+      </div>
+      <div class="ar-btns">
+        <button class="ar-btn ar-btn-blue" onclick="openAdminForm('edit',${item.id})">✏️</button>
+        <button class="ar-btn ar-btn-red" onclick="delItem(${item.id})">🗑️</button>
+      </div>
+    </div>`).join("")+"<div style='height:14px'></div>";
+}
+
+// ── IMAGE UPLOAD SYSTEM ───────────────────────────────────────────
+let currentImgTab = "upload";   // upload | url | preset
+let uploadedImgData = null;     // base64 data URL from file upload
+let urlImgData = null;          // URL string from paste
+
+function switchImgTab(tab){
+  currentImgTab = tab;
+  ["upload","url","preset"].forEach(t=>{
+    document.getElementById("img-tab-"+t).style.display = t===tab?"block":"none";
+    document.getElementById("tab-"+t).className = "img-src-tab"+(t===tab?" active":"");
+  });
+}
+
+function handleFileUpload(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ showToast("File too large (max 5MB)","err"); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    uploadedImgData = e.target.result;
+    document.getElementById("img-placeholder").style.display = "none";
+    const wrap = document.getElementById("img-preview-wrap");
+    wrap.style.display = "block";
+    document.getElementById("img-preview-img").src = uploadedImgData;
+    document.getElementById("img-drop-zone").classList.add("has-img");
+    showToast("Photo uploaded! ✅");
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearUploadedImg(){
+  uploadedImgData = null;
+  document.getElementById("img-placeholder").style.display = "flex";
+  document.getElementById("img-preview-wrap").style.display = "none";
+  document.getElementById("img-drop-zone").classList.remove("has-img");
+  document.getElementById("img-file-input").value = "";
+}
+
+function previewUrl(){
+  const url = document.getElementById("img-url-inp").value.trim();
+  if(url.startsWith("http")){
+    document.getElementById("img-url-preview").style.display = "block";
+    document.getElementById("img-url-preview-img").src = url;
+    document.getElementById("img-url-status").textContent = "Loading...";
+    document.getElementById("img-url-status").style.color = "#7A6050";
+  }
+}
+function applyUrl(){
+  const url = document.getElementById("img-url-inp").value.trim();
+  if(!url){ showToast("Enter a valid URL","err"); return; }
+  urlImgData = url;
+  showToast("URL image set ✅");
+}
+function showUrlOk(){
+  document.getElementById("img-url-status").textContent = "✅ Image loaded";
+  document.getElementById("img-url-status").style.color = "#27AE60";
+  urlImgData = document.getElementById("img-url-inp").value.trim();
+}
+function showUrlError(){
+  document.getElementById("img-url-status").textContent = "❌ Cannot load image";
+  document.getElementById("img-url-status").style.color = "#E74C3C";
+}
+
+function getSelectedImg(item){
+  if(currentImgTab==="upload" && uploadedImgData) return { customImg: uploadedImgData, imgKey: item?.imgKey||"murukku" };
+  if(currentImgTab==="url" && urlImgData) return { customImg: urlImgData, imgKey: item?.imgKey||"murukku" };
+  return { customImg: null, imgKey: document.getElementById("f-imgkey")?.value || item?.imgKey || "murukku" };
+}
+
+// Override imgTag to support customImg
+const _origImgTag = imgTag;
+function imgTagFull(item, size, radius, ph){
+  if(item.customImg){
+    return `<img src="${item.customImg}" style="width:${size}px;height:${size}px;border-radius:${radius}px;object-fit:cover;display:block;flex-shrink:0" loading="lazy">`;
+  }
+  return imgTag(item.imgKey, size, radius, ph);
+}
+
+// ── ADMIN FORM ────────────────────────────────────────────────────
+function openAdminForm(mode,id){
+  const item = id ? menu.find(x=>x.id===id) : null;
+  uploadedImgData = null;
+  urlImgData = null;
+
+  document.getElementById("modal-title").textContent = mode==="add" ? "➕ Add Menu Item" : "✏️ Edit Item";
+  document.getElementById("edit-id").value = id||"";
+  document.getElementById("f-name").value = item?.name||"";
+  document.getElementById("f-ta").value = item?.ta||"";
+  document.getElementById("f-desc").value = item?.desc||"";
+  document.getElementById("f-price").value = item?.price||"";
+  document.getElementById("f-prep").value = item?.prep||"15";
+  document.getElementById("f-cat").value = item?.cat||"snacks";
+  document.getElementById("f-veg").checked = item?.veg||false;
+
+  // If item has a custom image, show it in upload preview
+  if(item?.customImg){
+    switchImgTab("upload");
+    uploadedImgData = item.customImg;
+    document.getElementById("img-placeholder").style.display = "none";
+    document.getElementById("img-preview-wrap").style.display = "block";
+    document.getElementById("img-preview-img").src = item.customImg;
+    document.getElementById("img-drop-zone").classList.add("has-img");
+  } else {
+    switchImgTab("upload");
+    clearUploadedImg();
+  }
+
+  // Preset tab
+  const sel = document.getElementById("f-imgkey");
+  if(sel){
+    sel.innerHTML = Object.keys(IMGS).map(k=>`<option value="${k}"${(item?.imgKey||"murukku")===k?" selected":""}>${k.replace(/_/g," ")}</option>`).join("");
+    updateImgPreview();
+  }
+
+  // Drag & drop support
+  const dz = document.getElementById("img-drop-zone");
+  dz.ondragover = e => { e.preventDefault(); dz.style.background="#fff0e8"; };
+  dz.ondragleave = () => { dz.style.background=""; };
+  dz.ondrop = e => {
+    e.preventDefault(); dz.style.background="";
+    const file = e.dataTransfer.files[0];
+    if(file && file.type.startsWith("image/")){
+      const inp = document.getElementById("img-file-input");
+      const dt = new DataTransfer(); dt.items.add(file); inp.files = dt.files;
+      handleFileUpload(inp);
+    }
+  };
+
+  document.getElementById("admin-modal").classList.add("open");
+}
+
+function updateImgPreview(){
+  const key = document.getElementById("f-imgkey")?.value;
+  const el = document.getElementById("modal-img-preview");
+  if(el && key) el.innerHTML = imgTag(key, 80, 10, "ar-ph");
+}
+
+function saveItem(){
+  const id = document.getElementById("edit-id").value;
+  const name = document.getElementById("f-name").value.trim();
+  const price = parseFloat(document.getElementById("f-price").value);
+  if(!name||!price){ showToast("Name & price required","err"); return; }
+
+  const imgData = getSelectedImg(id ? menu.find(x=>String(x.id)===String(id)) : null);
+
+  const item = {
+    id: id ? parseInt(id)||id : uid(),
+    name, ta: document.getElementById("f-ta").value,
+    desc: document.getElementById("f-desc").value,
+    price, prep: parseInt(document.getElementById("f-prep").value)||15,
+    cat: document.getElementById("f-cat").value,
+    imgKey: imgData.imgKey,
+    customImg: imgData.customImg,
+    veg: document.getElementById("f-veg").checked,
+    rating: 4.5, pop: false,
+  };
+  if(id) menu = menu.map(x => String(x.id)===String(id) ? item : x);
+  else menu.push(item);
+  document.getElementById("admin-modal").classList.remove("open");
+  showToast(id ? "Item updated ✅" : "Item added ✅");
+  renderAdmin();
+}
+
+function delItem(id){
+  menu=menu.filter(x=>x.id!==id);
+  showToast("Removed 🗑️"); renderAdmin();
+}
+
+function closeModal(e){
+  if(e.target.id==="admin-modal") document.getElementById("admin-modal").classList.remove("open");
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+renderLocBar();
+renderHome();
+renderMenu();
+</script>
+</body>
+</html>
