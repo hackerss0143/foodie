@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foodie V2</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+<h1>Foodie V2</h1>
+<select id="location">
+<option>Kalpakkam</option>
+<option>Koovathur</option>
+</select>
+</header>
+
+<section>
+<input id="search" placeholder="Search food...">
+<button onclick="filterFoods()">Search</button>
+</section>
+
+<div id="food-list"></div>
+
+<h2>Cart</h2>
+<ul id="cart"></ul>
+<p>Total ₹<span id="total">0</span></p>
+
+<h2>Order Tracking</h2>
+<progress value="50" max="100"></progress>
+<p>Preparing Order...</p>
+
+<button onclick="payNow()">Pay with GPay / UPI</button>
+
+<script src="js/app.js"></script>
+</body>
+</html>
